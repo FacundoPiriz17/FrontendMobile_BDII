@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "FrontendMobile_BDII",
+    "slug": "FrontendMobile_BDII",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "frontendmobilebdii",
+    "userInterfaceStyle": "automatic",
+    "android": {
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#208AEF"
+        }
+      ],
+      "expo-secure-store"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
