@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { validacionService } from "../../src/features/validaciones/services/validacionService";
 import { useFetch } from "../../src/hooks/useFetch";
 import { AppBadge } from "../../src/components/ui/AppBadge";
+import { HeroBackground } from "../../src/components/ui/HeroBackground";
 import { AppCard, CardBody } from "../../src/components/ui/AppCard";
 import { FadeInCard } from "../../src/components/ui/FadeInCard";
 import { LoadingScreen } from "../../src/components/ui/LoadingScreen";
@@ -39,7 +40,8 @@ export default function ValidacionesScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-800 px-4 pb-4" style={{ paddingTop: insets.top + 12 }}>
+            <View className="overflow-hidden bg-navy-800 px-4 pb-4" style={{ paddingTop: insets.top + 12 }}>
+                <HeroBackground variant="funcionario" orbs={false} />
                 <Text className="text-xl font-extrabold text-white">Validaciones</Text>
                 <View className="mt-2 flex-row gap-3">
                     <View className="rounded-xl bg-white/10 px-3 py-1.5">
@@ -64,31 +66,50 @@ export default function ValidacionesScreen() {
                     />
                 ) : (
                     <View className="gap-3">
-                        {lista.map((v, i) => (
-                            <FadeInCard key={v.idValidacion ?? i} index={i}>
-                                <AppCard>
-                                    <CardBody>
-                                        <View className="flex-row items-center gap-3">
-                                            <View className="size-10 items-center justify-center rounded-xl bg-ok-100">
-                                                <Ionicons name="checkmark-circle" size={20} color="#047857" />
-                                            </View>
-                                            <View className="flex-1">
-                                                <Text className="text-sm font-bold text-ink">Entrada #{v.idEntrada}</Text>
-                                                <Text className="text-xs text-ink-faint">
-                                                    Sector {v.nombreSector ?? "—"} · {formatFechaHora(v.fechaHora)}
-                                                </Text>
-                                                {v.nombrePropietario && (
-                                                    <Text className="text-xs text-ink-faint" numberOfLines={1}>
-                                                        {v.nombrePropietario}
+                        {lista.map((v, i) => {
+                            const ok = v.esValida;
+                            return (
+                                <FadeInCard key={v.idValidacion ?? i} index={i}>
+                                    <AppCard>
+                                        <CardBody>
+                                            <View className="flex-row items-center gap-3">
+                                                <View
+                                                    className={`size-10 items-center justify-center rounded-xl ${
+                                                        ok ? "bg-ok-100" : "bg-danger-100"
+                                                    }`}
+                                                >
+                                                    <Ionicons
+                                                        name={ok ? "checkmark-circle" : "close-circle"}
+                                                        size={20}
+                                                        color={ok ? "#047857" : "#ba1a1a"}
+                                                    />
+                                                </View>
+                                                <View className="flex-1">
+                                                    <Text className="text-sm font-bold text-ink">
+                                                        Entrada #{v.idEntrada}
                                                     </Text>
-                                                )}
+                                                    <Text className="text-xs text-ink-faint">
+                                                        {v.nombreSector ? `Sector ${v.nombreSector} · ` : ""}
+                                                        {formatFechaHora(v.fechaHora)}
+                                                    </Text>
+                                                    {v.nombrePropietario && (
+                                                        <Text
+                                                            className="text-xs text-ink-faint"
+                                                            numberOfLines={1}
+                                                        >
+                                                            {v.nombrePropietario}
+                                                        </Text>
+                                                    )}
+                                                </View>
+                                                <AppBadge variant={ok ? "ok" : "danger"}>
+                                                    {ok ? "Válida" : "Inválida"}
+                                                </AppBadge>
                                             </View>
-                                            <AppBadge variant="ok">Válida</AppBadge>
-                                        </View>
-                                    </CardBody>
-                                </AppCard>
-                            </FadeInCard>
-                        ))}
+                                        </CardBody>
+                                    </AppCard>
+                                </FadeInCard>
+                            );
+                        })}
                     </View>
                 )}
             </ScrollView>

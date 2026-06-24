@@ -8,6 +8,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 import { compraService } from "../../../src/features/compras/services/compraService";
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppBadge } from "../../../src/components/ui/AppBadge";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { AppButton } from "../../../src/components/ui/AppButton";
 import { FadeInCard } from "../../../src/components/ui/FadeInCard";
 import { ConfirmDialog } from "../../../src/components/feedback/ConfirmDialog";
@@ -77,7 +78,8 @@ export default function HistorialComprasScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-950 px-4 pb-3" style={{ paddingTop: insets.top + 12 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-3" style={{ paddingTop: insets.top + 12 }}>
+                <HeroBackground orbs={false} />
                 <View className="flex-row items-center justify-between">
                     <View>
                         <Text className="text-xl font-extrabold text-white">Mis compras</Text>
@@ -86,7 +88,7 @@ export default function HistorialComprasScreen() {
                         </Text>
                     </View>
                     <Pressable
-                        onPress={() => router.push("/(general)/partidos/index")}
+                        onPress={() => router.push("/(general)/partidos")}
                         className="flex-row items-center gap-1.5 rounded-xl bg-energy-500 px-3 py-2 active:bg-energy-400"
                     >
                         <Ionicons name="add" size={16} color="#00173a" />
@@ -132,7 +134,7 @@ export default function HistorialComprasScreen() {
                         }
                         actionLabel={filtro === "todas" ? "Ver partidos" : undefined}
                         onAction={
-                            filtro === "todas" ? () => router.push("/(general)/partidos/index") : undefined
+                            filtro === "todas" ? () => router.push("/(general)/partidos") : undefined
                         }
                     />
                 ) : (

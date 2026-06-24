@@ -24,15 +24,15 @@ export default function ScannerScreen() {
                     <Ionicons name="phone-portrait-outline" size={32} color="#ba1a1a" />
                 </View>
                 <Text className="text-center text-xl font-extrabold text-white">
-                    Dispositivo no autorizado
+                    Sin dispositivo asignado
                 </Text>
                 <Text className="mt-2 text-center text-sm text-navy-300">
-                    Este dispositivo no está registrado en el sistema. Solicitá al administrador que lo
-                    vincule a tu cuenta antes de poder escanear entradas.
+                    No tenés un dispositivo de escaneo activo asignado a tu cuenta. Solicitá a un
+                    administrador que te asigne uno antes de poder escanear entradas.
                 </Text>
                 <View className="mt-6 w-full rounded-2xl border border-warn-100/30 bg-warn-100/10 px-4 py-3">
                     <Text className="text-center text-xs font-semibold text-warn-500">
-                        El ID de dispositivo es único y debe ser habilitado por un administrador.
+                        Los dispositivos de escaneo se asignan desde el panel de administración.
                     </Text>
                 </View>
             </View>

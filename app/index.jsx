@@ -13,7 +13,7 @@ export default function Index() {
         return <Redirect href="/(auth)/login" />;
     }
 
-    if (isAdmin) return <Redirect href="/(general)/home" />;
+    if (isAdmin) return <Redirect href="/(admin)/home" />;
     if (isFuncionario && !isGeneral) return <Redirect href="/(funcionario)/home" />;
     return <Redirect href="/(general)/home" />;
 }

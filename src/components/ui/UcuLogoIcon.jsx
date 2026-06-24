@@ -3,14 +3,6 @@ import { cn } from "../../lib/cn";
 
 const ucuLogo = require("../../../assets/images/ucu-logo-white.png");
 
-/**
- * Logo institucional de la UCU.
- * Replica el patrón visual del frontend web (UcuLogoIcon.jsx):
- * un contenedor con fondo navy y el isotipo blanco adentro.
- *
- * Uso típico: <UcuLogoIcon className="size-9" /> dentro de un
- * header/hero con fondo oscuro (navy-950, navy-800, etc.)
- */
 export function UcuLogoIcon({ className, imgClassName, size, style }) {
     return (
         <View

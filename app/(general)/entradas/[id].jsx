@@ -9,6 +9,9 @@ import { transferenciaService } from "../../../src/features/transferencias/servi
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppCard, CardBody, CardHeader } from "../../../src/components/ui/AppCard";
 import { AppBadge } from "../../../src/components/ui/AppBadge";
+import QRCode from "react-native-qrcode-svg";
+import { Flag } from "../../../src/components/ui/Flag";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { AppButton } from "../../../src/components/ui/AppButton";
 import { AppModal } from "../../../src/components/ui/AppModal";
 import { AppInput } from "../../../src/components/ui/AppInput";
@@ -116,7 +119,8 @@ export default function EntradaDetalleScreen() {
                 showsVerticalScrollIndicator={false}
             >
                 {/* Header */}
-                <View className="bg-navy-950 px-4 pb-5" style={{ paddingTop: insets.top + 8 }}>
+                <View className="overflow-hidden bg-navy-950 px-4 pb-5" style={{ paddingTop: insets.top + 8 }}>
+                    <HeroBackground orbs={false} />
                     <Pressable onPress={() => router.back()} hitSlop={8} className="mb-3 flex-row items-center gap-1.5">
                         <Ionicons name="arrow-back" size={20} color="#7694d0" />
                         <Text className="text-sm font-semibold text-navy-300">Mis entradas</Text>
@@ -126,13 +130,17 @@ export default function EntradaDetalleScreen() {
                             <Text className="text-[10px] font-bold uppercase tracking-widest text-navy-300">
                                 Entrada #{e.idEntrada}
                             </Text>
-                            <Text
-                                className="mt-1 text-xl font-extrabold text-white"
-                                style={{ letterSpacing: -0.3 }}
-                                numberOfLines={2}
-                            >
-                                {p?.equipoLocal} vs {p?.equipoVisitante}
-                            </Text>
+                            <View className="mt-1 flex-row items-center gap-2">
+                                <Flag nombre={p?.equipoLocal} size="sm" />
+                                <Text
+                                    className="flex-1 text-xl font-extrabold text-white"
+                                    style={{ letterSpacing: -0.3 }}
+                                    numberOfLines={2}
+                                >
+                                    {p?.equipoLocal} vs {p?.equipoVisitante}
+                                </Text>
+                                <Flag nombre={p?.equipoVisitante} size="sm" />
+                            </View>
                             <Text className="mt-1 text-xs text-navy-300">
                                 {formatFecha(p?.fecha)} · {formatHora(p?.hora)} · Sector {e.nombreSector}
                             </Text>
@@ -159,6 +167,10 @@ export default function EntradaDetalleScreen() {
                                     <View className="size-48 items-center justify-center rounded-xl bg-container-low">
                                         <Ionicons name="qr-code-outline" size={48} color="#7694d0" />
                                         <Text className="mt-2 text-xs text-ink-faint">Generando QR…</Text>
+                                    </View>
+                                ) : qrData?.codigoQr ? (
+                                    <View className="rounded-2xl border-4 border-navy-950 bg-white p-2">
+                                        <QRCode value={qrData.codigoQr} size={200} backgroundColor="#ffffff" color="#00173a" />
                                     </View>
                                 ) : qrData?.qrPngBase64 ? (
                                     <View className="rounded-2xl border-4 border-navy-950 p-2">

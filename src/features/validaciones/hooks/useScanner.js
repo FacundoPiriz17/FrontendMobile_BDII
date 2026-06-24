@@ -1,45 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
-import { getDeviceId } from "../../../lib/deviceId";
+import { useDeviceStore, selectMiDispositivo } from "../../dispositivo/store/useDeviceStore";
 import { validacionService } from "../services/validacionService";
-import { dispositivoService } from "../../dispositivo/services/dispositivoService";
 
 export function useScanner() {
-    const [deviceId, setDeviceId] = useState(null);
-    const [deviceRegistrado, setDeviceRegistrado] = useState(false);
-    const [loadingDevice, setLoadingDevice] = useState(true);
+    const { dispositivos, installationId, loading: loadingDevice, loaded, init } = useDeviceStore();
     const [estado, setEstado] = useState("idle");
     const [resultado, setResultado] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
 
-    // Obtener el device ID y verificar si está registrado
     useEffect(() => {
-        (async () => {
-            setLoadingDevice(true);
-            try {
-                const id = await getDeviceId();
-                setDeviceId(id);
+        if (!loaded) init();
+    }, [loaded, init]);
 
-                const dispositivos = await dispositivoService.mios();
-                const registrado = dispositivos.some((d) => d.idDispositivo === id);
-                setDeviceRegistrado(registrado);
-            } catch {
-                setDeviceRegistrado(false);
-            } finally {
-                setLoadingDevice(false);
-            }
-        })();
-    }, []);
+    // Usa el dispositivo de ESTE teléfono (por installationId).
+    const dispositivo = selectMiDispositivo(dispositivos, installationId);
+    const deviceRegistrado = Boolean(dispositivo);
+    const idDispositivo = dispositivo?.idDispositivoEscaneo ?? null;
 
     const procesarQr = useCallback(
         async (codigoEscaneado) => {
-            if (!deviceId) {
+            if (!idDispositivo) {
                 setEstado("error");
-                setErrorMsg("No se pudo identificar el dispositivo.");
-                return;
-            }
-            if (!deviceRegistrado) {
-                setEstado("error");
-                setErrorMsg("Este dispositivo no está registrado. Contactá a un administrador.");
+                setErrorMsg(
+                    "No tenés un dispositivo de escaneo activo asignado. Pedí a un administrador que te asigne uno."
+                );
                 return;
             }
 
@@ -48,23 +32,28 @@ export function useScanner() {
             setResultado(null);
 
             try {
-                const res = await validacionService.escanear(deviceId, codigoEscaneado);
+                const v = await validacionService.escanear(idDispositivo, codigoEscaneado);
+                if (v?.esValida === false) {
+                    setEstado("error");
+                    setErrorMsg("Entrada inválida.");
+                    return;
+                }
                 setResultado({
-                    idEntrada: res?.idEntrada,
-                    nombrePropietario: res?.nombrePropietario,
-                    partido: res?.partido
-                        ? `${res.partido.equipoLocal} vs ${res.partido.equipoVisitante}`
-                        : undefined,
-                    sector: res?.nombreSector,
-                    mensaje: res?.mensaje ?? "Entrada válida",
+                    idEntrada: v?.idEntrada,
+                    nombrePropietario: v?.nombrePropietario,
+                    partido: v?.partido,
+                    sector: v?.nombreSector,
+                    mensaje: "Entrada válida",
                 });
                 setEstado("success");
             } catch (err) {
-                setEstado("error");
-                setErrorMsg(err?.detail ?? err?.message ?? "QR inválido o entrada ya consumida.");
+                const msg = err?.detail ?? err?.message ?? "QR inválido o entrada ya consumida.";
+                const yaUsada = /consumid|ya .*v[áa]lid|ya tiene|registrada/i.test(msg);
+                setEstado(yaUsada ? "duplicada" : "error");
+                setErrorMsg(msg);
             }
         },
-        [deviceId, deviceRegistrado]
+        [idDispositivo]
     );
 
     const reset = useCallback(() => {
@@ -74,7 +63,8 @@ export function useScanner() {
     }, []);
 
     return {
-        deviceId,
+        idDispositivo,
+        dispositivo,
         deviceRegistrado,
         loadingDevice,
         estado,

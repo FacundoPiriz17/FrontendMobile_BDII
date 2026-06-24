@@ -10,6 +10,8 @@ import { apiClient } from "../../src/services/apiClient";
 import { endpoints } from "../../src/services/endpoints";
 import { AppCard, CardBody, CardHeader } from "../../src/components/ui/AppCard";
 import { AppBadge } from "../../src/components/ui/AppBadge";
+import { Flag } from "../../src/components/ui/Flag";
+import { HeroBackground } from "../../src/components/ui/HeroBackground";
 import { UcuLogoIcon } from "../../src/components/ui/UcuLogoIcon";
 import { LoadingScreen } from "../../src/components/ui/LoadingScreen";
 import { ErrorMessage } from "../../src/components/feedback/ErrorMessage";
@@ -40,8 +42,9 @@ export default function FuncionarioHomeScreen() {
             contentContainerStyle={{ paddingBottom: 24 }}
             showsVerticalScrollIndicator={false}
         >
-            {/* Hero header — tono distinto: navy-800 para diferenciar del general */}
-            <View className="bg-navy-800 px-5 pb-6" style={{ paddingTop: insets.top + 16 }}>
+            {/* Hero header — tono distinto para diferenciar del general */}
+            <View className="overflow-hidden bg-navy-800 px-5 pb-6" style={{ paddingTop: insets.top + 16 }}>
+                <HeroBackground variant="funcionario" />
                 <View className="mb-4 flex-row items-center justify-between">
                     <View className="flex-row items-center gap-2">
                         <UcuLogoIcon className="size-9 rounded-xl bg-white/10 p-1.5 ring-1 ring-white/15" size={36} />
@@ -53,7 +56,7 @@ export default function FuncionarioHomeScreen() {
                         </View>
                     </View>
                     <Pressable
-                        onPress={() => router.push("/(general)/perfil")}
+                        onPress={() => router.push("/(funcionario)/perfil")}
                         className="size-9 items-center justify-center rounded-full bg-white/15"
                     >
                         <Text className="text-sm font-extrabold text-white">
@@ -78,16 +81,23 @@ export default function FuncionarioHomeScreen() {
                 <View className="flex-row gap-3">
                     {[
                         {
-                            label: "Validadas hoy",
-                            value: h?.validacionesHoy ?? 0,
+                            label: "Válidas hoy",
+                            value: h?.validacionesValidasHoy ?? 0,
                             icon: "checkmark-circle",
                             color: "#047857",
                             bg: "bg-ok-100",
                         },
                         {
-                            label: "Sectores asig.",
-                            value: h?.sectoresAsignados ?? 0,
-                            icon: "grid",
+                            label: "Inválidas hoy",
+                            value: h?.validacionesInvalidasHoy ?? 0,
+                            icon: "close-circle",
+                            color: "#ba1a1a",
+                            bg: "bg-danger-100",
+                        },
+                        {
+                            label: "Disp. activos",
+                            value: h?.dispositivosActivos ?? 0,
+                            icon: "phone-portrait",
                             color: "#002b61",
                             bg: "bg-navy-100",
                         },
@@ -155,29 +165,6 @@ export default function FuncionarioHomeScreen() {
                     </View>
                 </AppCard>
 
-                {/* Dispositivo vinculado */}
-                {h?.dispositivo && (
-                    <AppCard>
-                        <CardHeader title="Dispositivo activo" />
-                        <CardBody>
-                            <View className="flex-row items-center gap-3">
-                                <View className="size-10 items-center justify-center rounded-xl bg-ok-100">
-                                    <Ionicons name="phone-portrait" size={20} color="#047857" />
-                                </View>
-                                <View className="flex-1">
-                                    <Text className="text-sm font-bold text-ink" numberOfLines={1}>
-                                        {h.dispositivo.idDispositivo}
-                                    </Text>
-                                    <Text className="text-xs text-ink-faint">
-                                        Vinculado: {formatFechaHora(h.dispositivo.fechaHoraVinculacion)}
-                                    </Text>
-                                </View>
-                                <AppBadge variant="ok">Activo</AppBadge>
-                            </View>
-                        </CardBody>
-                    </AppCard>
-                )}
-
                 {/* Últimas validaciones */}
                 {(h?.ultimasValidaciones?.length ?? 0) > 0 && (
                     <AppCard>
@@ -190,36 +177,42 @@ export default function FuncionarioHomeScreen() {
                             }
                         />
                         <View className="divide-y divide-container-high">
-                            {h.ultimasValidaciones.slice(0, 5).map((v, i) => (
-                                <Animated.View
-                                    key={i}
-                                    entering={FadeIn.duration(220).delay(Math.min(i, 8) * 40)}
-                                    className="flex-row items-center gap-3 px-4 py-3"
-                                >
-                                    <View className="size-8 items-center justify-center rounded-lg bg-ok-100">
-                                        <Ionicons name="checkmark" size={16} color="#047857" />
-                                    </View>
-                                    <View className="flex-1">
-                                        <Text className="text-sm font-semibold text-ink">Entrada #{v.idEntrada}</Text>
-                                        <Text className="text-xs text-ink-faint">
-                                            Sector {v.nombreSector} · {formatFechaHora(v.fechaHora)}
-                                        </Text>
-                                    </View>
-                                    <AppBadge variant="ok">OK</AppBadge>
-                                </Animated.View>
-                            ))}
+                            {h.ultimasValidaciones.slice(0, 5).map((v, i) => {
+                                const ok = String(v.estado ?? "").toLowerCase().startsWith("vál");
+                                return (
+                                    <Animated.View
+                                        key={v.idValidacion ?? i}
+                                        entering={FadeIn.duration(220).delay(Math.min(i, 8) * 40)}
+                                        className="flex-row items-center gap-3 px-4 py-3"
+                                    >
+                                        <View
+                                            className={`size-8 items-center justify-center rounded-lg ${
+                                                ok ? "bg-ok-100" : "bg-danger-100"
+                                            }`}
+                                        >
+                                            <Ionicons
+                                                name={ok ? "checkmark" : "close"}
+                                                size={16}
+                                                color={ok ? "#047857" : "#ba1a1a"}
+                                            />
+                                        </View>
+                                        <Flag nombre={v.equipoLocal} size="sm" />
+                                        <View className="flex-1">
+                                            <Text className="text-sm font-semibold text-ink" numberOfLines={1}>
+                                                {v.equipoLocal} vs {v.equipoVisitante}
+                                            </Text>
+                                            <Text className="text-xs text-ink-faint">
+                                                Entrada #{v.idEntrada} · {formatFechaHora(v.fechaHora)}
+                                            </Text>
+                                        </View>
+                                        <AppBadge variant={ok ? "ok" : "danger"}>
+                                            {ok ? "Válida" : "Inválida"}
+                                        </AppBadge>
+                                    </Animated.View>
+                                );
+                            })}
                         </View>
                     </AppCard>
-                )}
-
-                {/* Info sector */}
-                {h?.mensaje && (
-                    <View className="rounded-2xl border border-info-100 bg-info-100 px-4 py-3">
-                        <View className="flex-row items-start gap-2">
-                            <Ionicons name="information-circle" size={16} color="#1d4ed8" />
-                            <Text className="flex-1 text-sm text-info-600">{h.mensaje}</Text>
-                        </View>
-                    </View>
                 )}
             </View>
         </ScrollView>

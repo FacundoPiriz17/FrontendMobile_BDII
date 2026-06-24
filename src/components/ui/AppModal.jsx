@@ -7,8 +7,8 @@ export function AppModal({ visible, onClose, title, children }) {
         <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
             <Pressable className="flex-1 justify-end bg-black/40" onPress={onClose}>
                 <Animated.View
-                    entering={SlideInDown.duration(260).springify().damping(18)}
-                    exiting={SlideOutDown.duration(180)}
+                    entering={SlideInDown.duration(200)}
+                    exiting={SlideOutDown.duration(160)}
                 >
                     <Pressable
                         className="rounded-t-3xl bg-white px-5 pb-10 pt-5"

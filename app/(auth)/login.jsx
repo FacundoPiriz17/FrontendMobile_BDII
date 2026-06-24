@@ -9,6 +9,7 @@ import { useAuthStore } from "../../src/features/auth/store/useAuthStore";
 import { AppInput } from "../../src/components/ui/AppInput";
 import { AppButton } from "../../src/components/ui/AppButton";
 import { UcuLogoIcon } from "../../src/components/ui/UcuLogoIcon";
+import { HeroBackground } from "../../src/components/ui/HeroBackground";
 import { ROLES } from "../../src/lib/constants";
 
 export default function LoginScreen() {
@@ -31,7 +32,10 @@ export default function LoginScreen() {
         try {
             const roles = await login(email.trim(), password);
             Toast.show({ type: "success", text1: "Sesión iniciada" });
-            if (roles.includes(ROLES.FUNCIONARIO) && !roles.includes(ROLES.GENERAL)) {
+            // Ruteo por rol — mismo criterio que app/index.jsx
+            if (roles.includes(ROLES.ADMIN)) {
+                router.replace("/(admin)/home");
+            } else if (roles.includes(ROLES.FUNCIONARIO) && !roles.includes(ROLES.GENERAL)) {
                 router.replace("/(funcionario)/home");
             } else {
                 router.replace("/(general)/home");
@@ -44,8 +48,9 @@ export default function LoginScreen() {
     };
 
     return (
-        <View className="flex-1 bg-navy-950">
+        <View className="flex-1 overflow-hidden bg-navy-950">
             <StatusBar style="light" />
+            <HeroBackground />
             {/* Hero top */}
             <View className="items-center px-6 pb-8" style={{ paddingTop: insets.top + 32 }}>
                 {/* Logo */}

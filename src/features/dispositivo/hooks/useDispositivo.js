@@ -1,47 +1,35 @@
-import { useCallback, useEffect, useState } from "react";
-import { getDeviceId } from "../../../lib/deviceId";
-import { dispositivoService } from "../services/dispositivoService";
+import { useCallback, useEffect } from "react";
+import { useDeviceStore, selectMiDispositivo, ordenarDispositivos } from "../store/useDeviceStore";
 
 export function useDispositivo() {
-    const [info, setInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [registrando, setRegistrando] = useState(false);
-    const [error, setError] = useState(null);
-
-    const cargar = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            const id = await getDeviceId();
-            const dispositivos = await dispositivoService.mios();
-            const encontrado = dispositivos.find((d) => d.idDispositivo === id);
-            setInfo({
-                idDispositivo: id,
-                registrado: !!encontrado,
-                fechaHoraVinculacion: encontrado?.fechaHoraVinculacion,
-                emailFuncionario: encontrado?.emailFuncionario,
-            });
-        } catch (e) {
-            setError(e);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    const { installationId, dispositivos, loading, error, loaded, init, refetchDispositivos } =
+        useDeviceStore();
 
     useEffect(() => {
-        cargar();
-    }, [cargar]);
+        if (!loaded) init();
+    }, [loaded, init]);
 
-    const registrar = useCallback(async () => {
-        const id = await getDeviceId();
-        setRegistrando(true);
-        try {
-            await dispositivoService.crear({ idDispositivo: id });
-            await cargar();
-        } finally {
-            setRegistrando(false);
-        }
-    }, [cargar]);
+    const refetch = useCallback(async () => {
+        await refetchDispositivos();
+    }, [refetchDispositivos]);
 
-    return { info, loading, registrando, error, refetch: cargar, registrar };
+    // Dispositivo de ESTE teléfono (el que se está usando ahora).
+    const dispositivoActual = selectMiDispositivo(dispositivos, installationId);
+    // Lista completa ordenada: primero el de este teléfono, luego el resto.
+    const dispositivosOrdenados = ordenarDispositivos(dispositivos, installationId);
+    // Los "otros" dispositivos habilitados del funcionario (sin el de este teléfono).
+    const otrosDispositivos = dispositivosOrdenados.filter(
+        (d) => d !== dispositivoActual
+    );
+
+    return {
+        installationId,
+        dispositivos: dispositivosOrdenados,
+        dispositivoActual,
+        otrosDispositivos,
+        registrado: Boolean(dispositivoActual),
+        loading,
+        error,
+        refetch,
+    };
 }

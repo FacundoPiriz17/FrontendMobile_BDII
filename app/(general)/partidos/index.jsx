@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { partidoService } from "../../../src/features/partidos/services/partidoService";
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppBadge } from "../../../src/components/ui/AppBadge";
+import { Flag } from "../../../src/components/ui/Flag";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { FadeInCard } from "../../../src/components/ui/FadeInCard";
 import { LoadingScreen } from "../../../src/components/ui/LoadingScreen";
 import { ErrorMessage } from "../../../src/components/feedback/ErrorMessage";
@@ -38,7 +40,8 @@ export default function PartidosScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-950 px-4 pb-4" style={{ paddingTop: insets.top + 12 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-4" style={{ paddingTop: insets.top + 12 }}>
+                <HeroBackground orbs={false} />
                 <Text className="text-xl font-extrabold text-white">Partidos</Text>
                 <Text className="mt-0.5 text-xs text-navy-300">Mundial 2026</Text>
                 {/* Search */}
@@ -89,16 +92,22 @@ export default function PartidosScreen() {
                                     </View>
                                     <View className="px-4 py-4">
                                         {/* Equipos */}
-                                        <View className="flex-row items-center justify-center gap-4">
-                                            <Text className="flex-1 text-right text-base font-bold text-ink" numberOfLines={2}>
-                                                {p.equipoLocal}
-                                            </Text>
+                                        <View className="flex-row items-center justify-center gap-3">
+                                            <View className="flex-1 flex-row items-center justify-end gap-2">
+                                                <Text className="text-right text-base font-bold text-ink" numberOfLines={2}>
+                                                    {p.equipoLocal}
+                                                </Text>
+                                                <Flag nombre={p.equipoLocal} codigo={p.codigoLocal} size="md" />
+                                            </View>
                                             <View className="rounded-lg bg-container px-2.5 py-1">
                                                 <Text className="text-xs font-extrabold text-navy-900">VS</Text>
                                             </View>
-                                            <Text className="flex-1 text-left text-base font-bold text-ink" numberOfLines={2}>
-                                                {p.equipoVisitante}
-                                            </Text>
+                                            <View className="flex-1 flex-row items-center justify-start gap-2">
+                                                <Flag nombre={p.equipoVisitante} codigo={p.codigoVisitante} size="md" />
+                                                <Text className="text-left text-base font-bold text-ink" numberOfLines={2}>
+                                                    {p.equipoVisitante}
+                                                </Text>
+                                            </View>
                                         </View>
                                         {/* Info */}
                                         <View className="mt-3 flex-row items-center justify-center gap-4">

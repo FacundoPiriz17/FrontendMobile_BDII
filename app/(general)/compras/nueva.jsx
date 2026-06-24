@@ -8,6 +8,7 @@ import { compraService } from "../../../src/features/compras/services/compraServ
 import { useCarritoStore } from "../../../src/features/compras/store/useCarritoStore";
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppButton } from "../../../src/components/ui/AppButton";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { AppCard, CardBody, CardHeader } from "../../../src/components/ui/AppCard";
 import { FadeInCard } from "../../../src/components/ui/FadeInCard";
 import { ConfirmDialog } from "../../../src/components/feedback/ConfirmDialog";
@@ -83,7 +84,8 @@ export default function NuevaCompraScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-950 px-4 pb-4" style={{ paddingTop: insets.top + 8 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-4" style={{ paddingTop: insets.top + 8 }}>
+                <HeroBackground orbs={false} />
                 <Pressable onPress={() => router.back()} hitSlop={8} className="mb-3 flex-row items-center gap-1.5">
                     <Ionicons name="arrow-back" size={20} color="#7694d0" />
                     <Text className="text-sm font-semibold text-navy-300">Volver</Text>
@@ -143,7 +145,7 @@ export default function NuevaCompraScreen() {
                     <>
                         <Text className="mb-3 mt-6 text-base font-bold text-ink">2. Elegí los sectores</Text>
                         <View className="gap-2">
-                            {(partidoActivo.sectoresHabilitados ?? []).map((s) => {
+                            {(partidoActivo.sectores ?? partidoActivo.sectoresHabilitados ?? []).map((s) => {
                                 const itemExistente = items.find(
                                     (i) => i.idPartido === selectedPartido && i.nombreSector === s.nombreSector
                                 );
@@ -165,7 +167,7 @@ export default function NuevaCompraScreen() {
                                                             Sector {s.nombreSector}
                                                         </Text>
                                                         <Text className="text-xs text-ink-faint">
-                                                            {formatMoney(s.costo)} c/u · {s.entradasDisponibles ?? "?"} disp.
+                                                            {formatMoney(s.costoTotalEntrada ?? s.costoSector ?? s.costo)} c/u · {s.entradasDisponibles ?? "?"} disp.
                                                         </Text>
                                                     </View>
                                                 </View>
@@ -196,7 +198,7 @@ export default function NuevaCompraScreen() {
                                                                 idPartido: selectedPartido,
                                                                 nombreSector: s.nombreSector,
                                                                 cantidad: 1,
-                                                                precioUnitario: s.costo,
+                                                                precioUnitario: s.costoTotalEntrada ?? s.costoSector ?? s.costo,
                                                                 nombrePartido: `${partidoActivo.equipoLocal} vs ${partidoActivo.equipoVisitante}`,
                                                                 fechaPartido: partidoActivo.fecha,
                                                                 horaPartido: partidoActivo.hora,

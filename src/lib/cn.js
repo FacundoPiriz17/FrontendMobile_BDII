@@ -1,7 +1,3 @@
-/**
- * Combina clases condicionales sin depender de librerías externas (clsx).
- * Acepta strings, arrays anidados, y objetos { clase: condicion }.
- */
 export function cn(...inputs) {
     const classes = [];
 

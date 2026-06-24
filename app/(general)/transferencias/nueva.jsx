@@ -8,6 +8,7 @@ import { transferenciaService } from "../../../src/features/transferencias/servi
 import { entradaService } from "../../../src/features/entradas/services/entradaService";
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppButton } from "../../../src/components/ui/AppButton";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { AppInput } from "../../../src/components/ui/AppInput";
 import { AppCard, CardBody } from "../../../src/components/ui/AppCard";
 import { LoadingScreen } from "../../../src/components/ui/LoadingScreen";
@@ -50,7 +51,7 @@ export default function NuevaTransferenciaScreen() {
         try {
             await transferenciaService.crear(selectedEntrada, emailDestino.trim());
             Toast.show({ type: "success", text1: "Transferencia enviada correctamente." });
-            router.replace("/(general)/transferencias/index");
+            router.replace("/(general)/transferencias");
         } catch (err) {
             setErrorLocal(err?.detail ?? "Error al enviar la transferencia.");
         } finally {
@@ -64,7 +65,8 @@ export default function NuevaTransferenciaScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-950 px-4 pb-4" style={{ paddingTop: insets.top + 8 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-4" style={{ paddingTop: insets.top + 8 }}>
+                <HeroBackground orbs={false} />
                 <Pressable onPress={() => router.back()} hitSlop={8} className="mb-3 flex-row items-center gap-1.5">
                     <Ionicons name="arrow-back" size={20} color="#7694d0" />
                     <Text className="text-sm font-semibold text-navy-300">Transferencias</Text>
@@ -92,7 +94,7 @@ export default function NuevaTransferenciaScreen() {
                         title="Sin entradas disponibles"
                         description="No tenés entradas activas que se puedan transferir."
                         actionLabel="Ver partidos"
-                        onAction={() => router.push("/(general)/partidos/index")}
+                        onAction={() => router.push("/(general)/partidos")}
                     />
                 ) : (
                     <View className="gap-2">

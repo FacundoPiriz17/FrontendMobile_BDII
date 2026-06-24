@@ -7,6 +7,7 @@ import Toast from "react-native-toast-message";
 import { transferenciaService } from "../../../src/features/transferencias/services/transferenciaService";
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppBadge } from "../../../src/components/ui/AppBadge";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { AppButton } from "../../../src/components/ui/AppButton";
 import { FadeInCard } from "../../../src/components/ui/FadeInCard";
 import { AppCard, CardBody } from "../../../src/components/ui/AppCard";
@@ -68,7 +69,8 @@ export default function TransferenciasScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-950 px-4 pb-3" style={{ paddingTop: insets.top + 12 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-3" style={{ paddingTop: insets.top + 12 }}>
+                <HeroBackground orbs={false} />
                 <View className="flex-row items-center justify-between">
                     <View>
                         <Text className="text-xl font-extrabold text-white">Transferencias</Text>
@@ -139,8 +141,16 @@ export default function TransferenciasScreen() {
                                                 </View>
                                                 <View className="flex-1">
                                                     <Text className="text-sm font-bold text-ink" numberOfLines={1}>
-                                                        Entrada #{t.idEntrada}
+                                                        Entrada #{t.entrada?.idEntrada ?? "—"}
+                                                        {t.entrada?.partido
+                                                            ? ` · ${t.entrada.partido.equipoLocal} vs ${t.entrada.partido.equipoVisitante}`
+                                                            : ""}
                                                     </Text>
+                                                    {t.entrada?.nombreSector && (
+                                                        <Text className="text-xs text-ink-faint">
+                                                            Sector {t.entrada.nombreSector}
+                                                        </Text>
+                                                    )}
                                                     <Text className="text-xs text-ink-faint">
                                                         {esRecibida ? `De: ${t.emailOrigen}` : `Para: ${t.emailDestino}`}
                                                     </Text>

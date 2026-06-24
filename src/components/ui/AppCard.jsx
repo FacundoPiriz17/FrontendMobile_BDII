@@ -4,7 +4,7 @@ import { cn } from "../../lib/cn";
 export function AppCard({ children, className, ...props }) {
     return (
         <View
-            className={cn("rounded-2xl border border-container-high bg-white", className)}
+            className={cn("rounded-2xl border border-container-high/60 bg-white", className)}
             style={{
                 shadowColor: "#141c28",
                 shadowOpacity: 0.06,

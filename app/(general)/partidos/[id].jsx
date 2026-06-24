@@ -7,6 +7,8 @@ import { partidoService } from "../../../src/features/partidos/services/partidoS
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppButton } from "../../../src/components/ui/AppButton";
 import { AppBadge } from "../../../src/components/ui/AppBadge";
+import { Flag } from "../../../src/components/ui/Flag";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { AppCard, CardBody, CardHeader } from "../../../src/components/ui/AppCard";
 import { LoadingScreen } from "../../../src/components/ui/LoadingScreen";
 import { ErrorMessage } from "../../../src/components/feedback/ErrorMessage";
@@ -29,13 +31,15 @@ export default function PartidoDetalleScreen() {
     if (!partido) return null;
 
     const p = partido;
-    const sectoresHabilitados = p.sectoresHabilitados ?? [];
+    // El backend (eventos/{id}) devuelve `sectores`; cada sector trae costoTotalEntrada.
+    const sectoresHabilitados = p.sectores ?? p.sectoresHabilitados ?? [];
     const puedeComprar = p.estado === "no empezado" && sectoresHabilitados.length > 0;
 
     return (
         <View className="flex-1 bg-surface">
             {/* Header navy */}
-            <View className="bg-navy-950 px-4 pb-6" style={{ paddingTop: insets.top + 8 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-6" style={{ paddingTop: insets.top + 8 }}>
+                <HeroBackground orbs={false} />
                 <Pressable onPress={() => router.back()} hitSlop={8} className="mb-3 flex-row items-center gap-1.5">
                     <Ionicons name="arrow-back" size={20} color="#7694d0" />
                     <Text className="text-sm font-semibold text-navy-300">Volver</Text>
@@ -45,9 +49,13 @@ export default function PartidoDetalleScreen() {
                         <Text className="text-[10px] font-bold uppercase tracking-widest text-navy-300">
                             {p.fase ?? "Mundial 2026"}
                         </Text>
-                        <Text className="mt-1 text-xl font-extrabold text-white" style={{ letterSpacing: -0.3 }}>
-                            {p.equipoLocal} vs {p.equipoVisitante}
-                        </Text>
+                        <View className="mt-1 flex-row items-center gap-2">
+                            <Flag nombre={p.equipoLocal} codigo={p.codigoLocal} size="md" />
+                            <Text className="flex-1 text-xl font-extrabold text-white" style={{ letterSpacing: -0.3 }} numberOfLines={2}>
+                                {p.equipoLocal} vs {p.equipoVisitante}
+                            </Text>
+                            <Flag nombre={p.equipoVisitante} codigo={p.codigoVisitante} size="md" />
+                        </View>
                     </View>
                     <AppBadge estado={p.estado}>{p.estado}</AppBadge>
                 </View>
@@ -112,7 +120,9 @@ export default function PartidoDetalleScreen() {
                                             </Text>
                                         </View>
                                     </View>
-                                    <Text className="text-sm font-bold text-navy-900">{formatMoney(s.costo)}</Text>
+                                    <Text className="text-sm font-bold text-navy-900">
+                                        {formatMoney(s.costoTotalEntrada ?? s.costoSector ?? s.costo)}
+                                    </Text>
                                 </View>
                             ))}
                         </CardBody>

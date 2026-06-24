@@ -3,7 +3,7 @@ import { authService } from "../services/authService";
 import { secureStorage, TOKEN_KEY } from "../../../lib/secureStorage";
 import { normalizarRol, ROLES } from "../../../lib/constants";
 import { setOnUnauthorized } from "../../../services/apiClient";
-import { clearMockSession } from "../../../lib/mockData";
+import { useDeviceStore } from "../../dispositivo/store/useDeviceStore";
 
 const aplicarRoles = (rawRoles = []) => rawRoles.map(normalizarRol);
 
@@ -36,7 +36,6 @@ export const useAuthStore = create((set, get) => ({
             });
         } catch {
             await secureStorage.remove(TOKEN_KEY);
-            clearMockSession();
         } finally {
             set({ initializing: false });
         }
@@ -69,7 +68,8 @@ export const useAuthStore = create((set, get) => ({
 
     logout: async () => {
         await secureStorage.remove(TOKEN_KEY);
-        clearMockSession();
+        // Limpia el estado del dispositivo en memoria (conserva el installation id cifrado).
+        useDeviceStore.getState().reset();
         set({
             user: null,
             token: null,

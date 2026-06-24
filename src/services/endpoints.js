@@ -61,5 +61,8 @@ export const endpoints = {
     reportes: {
         eventosMasVendidos: "/api/reportes/eventos-mas-vendidos",
         mayoresCompradores: "/api/reportes/mayores-compradores",
+        ocupacionEventos: "/api/reportes/ocupacion-eventos",
+        resumenValidaciones: "/api/reportes/validaciones/resumen",
+        auditoria: "/api/reportes/auditoria",
     },
 };

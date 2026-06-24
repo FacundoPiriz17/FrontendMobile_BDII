@@ -32,8 +32,8 @@ export function AppBadge({ children, variant, estado }) {
     const styles = variantClasses[resolvedVariant];
 
     return (
-        <View className={cn("rounded-full px-2.5 py-0.5", styles.container)}>
-            <Text className={cn("text-xs font-bold capitalize", styles.text)}>
+        <View className={cn("rounded-full px-2.5 py-1", styles.container)}>
+            <Text className={cn("text-[10px] font-bold uppercase tracking-wide", styles.text)}>
                 {children ?? estado}
             </Text>
         </View>

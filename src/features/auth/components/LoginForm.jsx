@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { View } from "react-native";
 import { AppInput } from "../../../components/ui/AppInput";

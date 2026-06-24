@@ -25,7 +25,6 @@ export function useQrDinamico(idEntrada, activo) {
         }
     }, [idEntrada, activo]);
 
-    // Arrancar el ciclo cuando activo=true
     useEffect(() => {
         if (!activo) {
             if (intervalRef.current) clearInterval(intervalRef.current);
@@ -47,7 +46,6 @@ export function useQrDinamico(idEntrada, activo) {
         };
     }, [activo, fetchQr]);
 
-    // Regenerar cuando la app vuelve a foreground
     useEffect(() => {
         if (!activo) return;
         const sub = AppState.addEventListener("change", (state) => {

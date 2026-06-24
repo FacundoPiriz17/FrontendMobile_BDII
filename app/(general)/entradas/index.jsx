@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { entradaService } from "../../../src/features/entradas/services/entradaService";
 import { useFetch } from "../../../src/hooks/useFetch";
 import { AppBadge } from "../../../src/components/ui/AppBadge";
+import { Flag } from "../../../src/components/ui/Flag";
+import { HeroBackground } from "../../../src/components/ui/HeroBackground";
 import { FadeInCard } from "../../../src/components/ui/FadeInCard";
 import { LoadingScreen } from "../../../src/components/ui/LoadingScreen";
 import { ErrorMessage } from "../../../src/components/feedback/ErrorMessage";
@@ -34,7 +36,8 @@ export default function EntradasScreen() {
     return (
         <View className="flex-1 bg-surface">
             {/* Header */}
-            <View className="bg-navy-950 px-4 pb-3" style={{ paddingTop: insets.top + 12 }}>
+            <View className="overflow-hidden bg-navy-950 px-4 pb-3" style={{ paddingTop: insets.top + 12 }}>
+                <HeroBackground orbs={false} />
                 <Text className="text-xl font-extrabold text-white">Mis entradas</Text>
                 <Text className="mt-0.5 text-xs text-navy-300">
                     {(entradas ?? []).length} entradas en total
@@ -77,7 +80,7 @@ export default function EntradasScreen() {
                         }
                         actionLabel={filtro === "todas" ? "Ver partidos" : undefined}
                         onAction={
-                            filtro === "todas" ? () => router.push("/(general)/partidos/index") : undefined
+                            filtro === "todas" ? () => router.push("/(general)/partidos") : undefined
                         }
                     />
                 ) : (
@@ -97,9 +100,13 @@ export default function EntradasScreen() {
                                         <AppBadge estado={e.estado}>{e.estado}</AppBadge>
                                     </View>
                                     <View className="px-4 py-3">
-                                        <Text className="text-base font-bold text-ink" numberOfLines={1}>
-                                            {e.partido?.equipoLocal} vs {e.partido?.equipoVisitante}
-                                        </Text>
+                                        <View className="flex-row items-center gap-2">
+                                            <Flag nombre={e.partido?.equipoLocal} size="sm" />
+                                            <Text className="flex-1 text-base font-bold text-ink" numberOfLines={1}>
+                                                {e.partido?.equipoLocal} vs {e.partido?.equipoVisitante}
+                                            </Text>
+                                            <Flag nombre={e.partido?.equipoVisitante} size="sm" />
+                                        </View>
                                         <View className="mt-2 flex-row flex-wrap gap-x-4 gap-y-1">
                                             <View className="flex-row items-center gap-1">
                                                 <Ionicons name="calendar-outline" size={12} color="#747781" />

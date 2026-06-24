@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import { AppState } from "react-native";
 
-/** Llama al callback cuando la app pasa de background → foreground */
 export function useAppForeground(onForeground) {
     const stateRef = useRef(AppState.currentState);
 

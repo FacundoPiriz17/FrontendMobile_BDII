@@ -9,6 +9,8 @@ import { apiClient } from "../../src/services/apiClient";
 import { endpoints } from "../../src/services/endpoints";
 import { AppCard, CardBody } from "../../src/components/ui/AppCard";
 import { AppBadge } from "../../src/components/ui/AppBadge";
+import { Flag } from "../../src/components/ui/Flag";
+import { HeroBackground } from "../../src/components/ui/HeroBackground";
 import { UcuLogoIcon } from "../../src/components/ui/UcuLogoIcon";
 import { FadeInCard } from "../../src/components/ui/FadeInCard";
 import { LoadingScreen } from "../../src/components/ui/LoadingScreen";
@@ -69,7 +71,8 @@ export default function HomeScreen() {
             showsVerticalScrollIndicator={false}
         >
             {/* Hero header */}
-            <View className="bg-navy-950 px-5 pb-6" style={{ paddingTop: insets.top + 16 }}>
+            <View className="overflow-hidden bg-navy-950 px-5 pb-6" style={{ paddingTop: insets.top + 16 }}>
+                <HeroBackground />
                 {/* Top row */}
                 <View className="mb-4 flex-row items-center justify-between">
                     <View className="flex-row items-center gap-2">
@@ -131,8 +134,8 @@ export default function HomeScreen() {
                 <Text className="mb-3 mt-6 text-base font-bold text-ink">Accesos rápidos</Text>
                 <View className="flex-row gap-3">
                     {[
-                        { label: "Ver partidos", icon: "calendar", route: "/(general)/partidos/index" },
-                        { label: "Mis entradas", icon: "ticket", route: "/(general)/entradas/index" },
+                        { label: "Ver partidos", icon: "calendar", route: "/(general)/partidos" },
+                        { label: "Mis entradas", icon: "ticket", route: "/(general)/entradas" },
                         { label: "Transferir", icon: "swap-horizontal", route: "/(general)/transferencias/nueva" },
                     ].map((a) => (
                         <Pressable
@@ -160,15 +163,13 @@ export default function HomeScreen() {
                                     <Pressable onPress={() => router.push(`/(general)/entradas/${e.idEntrada}`)}>
                                         <AppCard>
                                             <CardBody className="flex-row items-center gap-3">
-                                                <View className="size-10 items-center justify-center rounded-xl bg-navy-950">
-                                                    <Ionicons name="football" size={18} color="#00e3fd" />
-                                                </View>
+                                                <Flag nombre={e.equipoLocal} size="md" />
                                                 <View className="flex-1">
                                                     <Text className="text-sm font-bold text-ink" numberOfLines={1}>
-                                                        {e.partido?.equipoLocal} vs {e.partido?.equipoVisitante}
+                                                        {e.equipoLocal} vs {e.equipoVisitante}
                                                     </Text>
                                                     <Text className="text-xs text-ink-faint">
-                                                        {formatFecha(e.partido?.fecha)} · {formatHora(e.partido?.hora)} · Sector{" "}
+                                                        {formatFecha(e.fechaPartido)} · {formatHora(e.horaPartido)} · Sector{" "}
                                                         {e.nombreSector}
                                                     </Text>
                                                 </View>
@@ -191,7 +192,7 @@ export default function HomeScreen() {
                         <View className="gap-3">
                             {home.transferenciasPendientes.map((t, index) => (
                                 <FadeInCard key={t.idTransferencia} index={index}>
-                                    <Pressable onPress={() => router.push("/(general)/transferencias/index")}>
+                                    <Pressable onPress={() => router.push("/(general)/transferencias")}>
                                         <AppCard>
                                             <CardBody className="flex-row items-center gap-3">
                                                 <View className="size-10 items-center justify-center rounded-xl bg-warn-100">

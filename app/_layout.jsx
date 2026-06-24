@@ -26,6 +26,7 @@ export default function RootLayout() {
                         <Stack.Screen name="(auth)" />
                         <Stack.Screen name="(general)" />
                         <Stack.Screen name="(funcionario)" />
+                        <Stack.Screen name="(admin)" />
                         <Stack.Screen name="+not-found" />
                     </Stack>
                     <Toast config={toastConfig} />

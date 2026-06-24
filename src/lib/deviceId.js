@@ -1,36 +1,41 @@
-/*
-  Genera y persiste un ID de dispositivo estable usando
-  expo-secure-store. No depende de expo-device/expo-crypto
-  (no están en las libs del proyecto): el ID se arma localmente
-  combinando plataforma + nombre de dispositivo + un sufijo
-  aleatorio, y se guarda la primera vez que se genera.
-*/
-
-import { Platform } from "react-native";
+import * as Crypto from "expo-crypto";
+import * as Device from "expo-device";
 import { secureStorage } from "./secureStorage";
+import { INSTALLATION_ID_KEY } from "./constants";
 
-const DEVICE_ID_KEY = "ucu_mundial_device_id";
 let cachedId = null;
 
-const randomSegment = () => Math.random().toString(36).slice(2, 10);
+export function getModeloDispositivo() {
+    const base =
+        Device.modelName ||
+        Device.deviceName ||
+        [Device.brand, Device.osName].filter(Boolean).join(" ") ||
+        "Dispositivo móvil";
+    const conSO = Device.osName && !base.includes(Device.osName) ? `${base} ${Device.osName}` : base;
+    return conSO.trim().slice(0, 30);
+}
 
-const generarId = () => {
-    const base = `${Platform.OS}-mock-device`;
-    const sufijo = `${Date.now().toString(36)}-${randomSegment()}-${randomSegment()}`;
-    return `${base}-${sufijo}`.replace(/\s/g, "_");
-};
+export async function getOrCreateInstallationId() {
+    if (cachedId) return { installationId: cachedId, justCreated: false };
 
-export const getDeviceId = async () => {
-    if (cachedId) return cachedId;
-
-    const stored = await secureStorage.get(DEVICE_ID_KEY);
+    const stored = await secureStorage.get(INSTALLATION_ID_KEY);
     if (stored) {
         cachedId = stored;
-        return stored;
+        return { installationId: stored, justCreated: false };
     }
 
-    const newId = generarId();
-    await secureStorage.set(DEVICE_ID_KEY, newId);
-    cachedId = newId;
-    return newId;
-};
+    const installationId = Crypto.randomUUID();
+    await secureStorage.set(INSTALLATION_ID_KEY, installationId);
+    cachedId = installationId;
+    return { installationId, justCreated: true };
+}
+
+export async function getDeviceId() {
+    const { installationId } = await getOrCreateInstallationId();
+    return installationId;
+}
+
+export async function clearInstallationId() {
+    cachedId = null;
+    await secureStorage.remove(INSTALLATION_ID_KEY);
+}
